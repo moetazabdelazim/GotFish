@@ -50,7 +50,7 @@ def analyze_url(url: str):
             pass
 
         domain_norm = domain.lower()
-        brand_suspect = any(similarity(domain_norm, b.lower()) > 0.5 for b in BRAND_KEYWORDS)
+        brand_suspect = any(similarity(domain_norm, b.lower()) > 0.25 for b in BRAND_KEYWORDS)
         
 
 
@@ -66,7 +66,7 @@ def analyze_url(url: str):
             score = similarity(domain_norm, brand.lower())
             if brand.lower() in domain_norm:
                 reasons.append(f"Domain contains brand keyword '{brand}'")
-            elif score > 0.5:
+            elif score > 0.25:
                 verdict = "Suspicious ❌"
                 reasons.append(f"Domain '{domain}' is visually similar to '{brand}' (score={score:.2f})")
 
@@ -100,14 +100,14 @@ def analyze_email(sender: str):
 
         domain = match.group(1)
         domain_norm = domain.lower()
-        brand_suspect = any(similarity(domain_norm, b.lower()) > 0.6 for b in BRAND_KEYWORDS)
+        brand_suspect = any(similarity(domain_norm, b.lower()) > 0.25 for b in BRAND_KEYWORDS)
         
 
         for brand in BRAND_KEYWORDS:
             score = similarity(domain_norm, brand.lower())
             if brand.lower() in domain_norm:
                 reasons.append(f"Sender domain contains brand keyword '{brand}'")
-            elif score > 0.55:
+            elif score > 0.25:
                 verdict = "Suspicious ❌"
                 reasons.append(f"Sender domain '{domain}' is visually similar to '{brand}' (score={score:.2f})")
 
@@ -120,5 +120,6 @@ def analyze_email(sender: str):
 
     if not reasons:
         reasons.append("No suspicious patterns detected")
+
 
     return verdict, reasons
