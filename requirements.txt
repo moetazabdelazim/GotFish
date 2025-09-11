@@ -1,0 +1,5 @@
+Flask==2.3.5
+tldextract
+requests
+idna
+rapidfuzz
