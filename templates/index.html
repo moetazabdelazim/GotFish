@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>GotFish Link Analyzer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap" rel="stylesheet">
     <style>
 
@@ -142,6 +143,67 @@
             border-radius: 6px;
             overflow-x: auto;
         }
+                /* 🔹 ADDED — responsive breakpoints */
+        @media (max-width: 1024px) {
+            .info-panel {
+                position: static;
+                flex-direction: column;
+                align-items: stretch;
+                margin-top: 40px;
+            }
+        }
+
+        /* 🔹 ADDED — tablet layout */
+        @media (max-width: 768px) {
+            .form-container {
+                position: static;
+                margin: 20px auto;
+                width: 95%;
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 2.2em;
+                text-align: center;
+            }
+
+            input[type="submit"] {
+                width: 100%;
+                font-size: 1.1em;
+            }
+
+            .info-panel {
+                width: 95%;
+                margin: 20px auto;
+                padding: 20px;
+                box-shadow: 0 0 20px #00ffbf;
+            }
+        }
+
+        /* 🔹 ADDED — phone layout */
+        @media (max-width: 480px) {
+            body {
+                flex-direction: column;
+                align-items: center;
+                overflow-x: hidden;
+            }
+
+            .form-container, .info-panel {
+                width: 95%;
+                left: auto;
+                right: auto;
+                top: auto;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            label, input, select {
+                font-size: 0.9em;
+            }
+        }
+        /* 🔹 END responsive additions */
     </style>
 </head>
 <body>
@@ -235,3 +297,4 @@
     </div>
 </body>
 </html>
+
