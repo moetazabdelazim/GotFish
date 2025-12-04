@@ -1,300 +1,496 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>GotFish Link Analyzer</title>
+    <title>GotFish - Phishing Detection Analyzer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <style>
-
-        html, body {
+        * {
             margin: 0;
             padding: 0;
-            height: 100%;
-            font-family: 'Share Tech Mono', monospace;
-            background-color: #0c0c0c;
-            color: #00ffbf;
-            display: flex; /* test */
-            justify-content: center; /* test */
-            align-items: flex-start;
+            box-sizing: border-box;
         }
 
-        .form-container {
-            position: absolute;
-            top: 50px;
-            left: 50px;
-            width: 90%;
-            max-width: 800px;
-            padding: 40px;
-            border-radius: 12px;
-            background-color: #111;
-            box-shadow: 0 0 40px #00ffbf;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a2e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px 0;
         }
 
         h1 {
-            font-size: 3em;
-            font-family: 'UnifrakturCook', cursive;
-            color: #00ffbf;
-            text-shadow: 0 0 15px #00ffbf, 0 0 30px #00ffbf;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            background: linear-gradient(135deg, #00ffbf 0%, #00ccff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 0 30px rgba(0, 255, 191, 0.3);
+        }
+
+        .tagline {
+            color: #00ccff;
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            opacity: 0.9;
+        }
+
+        /* Main Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        @media (min-width: 968px) {
+            .content-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* Card Styling */
+        .card {
+            background: rgba(30, 30, 50, 0.6);
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid rgba(0, 255, 191, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+            .card h2 {
+                color: #00ffbf;
+                font-size: clamp(1.3rem, 3vw, 1.8rem);
+                margin-bottom: 20px;
+                font-weight: 600;
+            }
+
+        /* Form Styling */
+        .form-group {
+            margin-bottom: 20px;
         }
 
         label {
-            margin: 15px 0 5px;
-            font-size: 1.1em;
+            display: block;
+            margin-bottom: 8px;
+            color: #00ccff;
+            font-weight: 600;
+            font-size: 0.95rem;
         }
 
-        input[type="text"], select {
+        select, input[type="text"] {
             width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border-radius: 6px;
-            border: 1px solid #00ffbf;
-            background-color: #0c0c0c;
-            color: #00ffbf;
-            font-family: 'Orbitron', monospace;
-            font-size: 1em;
-            outline: none;
-        }
-
-            input[type="text"]:focus, select:focus {
-                border-color: #00ccff;
-                box-shadow: 0 0 15px #00ccff;
-            }
-
-        input[type="submit"] {
-            margin-top: 15px;
-            padding: 14px;
-            background: linear-gradient(90deg, #ff3300, #ff9900);
-            border: none;
+            padding: 14px 16px;
+            background: rgba(10, 10, 30, 0.8);
+            border: 2px solid rgba(0, 255, 191, 0.3);
             border-radius: 8px;
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #0c0c0c;
-            cursor: pointer;
+            color: #e0e0e0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
             transition: all 0.3s ease;
         }
 
-            input[type="submit"]:hover {
-                box-shadow: 0 0 25px #ff9900;
+            select:focus, input[type="text"]:focus {
+                outline: none;
+                border-color: #00ffbf;
+                box-shadow: 0 0 20px rgba(0, 255, 191, 0.3);
             }
 
-        .report {
-            margin-top: 40px;
+            input[type="text"]::placeholder {
+                color: rgba(255, 255, 255, 0.3);
+            }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #00ffbf 0%, #00ccff 100%);
+            border: none;
+            border-radius: 8px;
+            color: #0a0e27;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+            button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(0, 255, 191, 0.4);
+            }
+
+            button:active {
+                transform: translateY(0);
+            }
+
+        /* Results Card */
+        .results-card {
+            background: rgba(30, 30, 50, 0.9);
+            border-radius: 16px;
             padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 0 30px #00ffbf;
-            width: 90%;
-            max-width: 700px;
+            border: 2px solid;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            margin-top: 30px;
+            animation: slideIn 0.5s ease;
         }
 
-            .report h2 {
-                color: #00ccff;
-                margin-bottom: 15px;
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
             }
 
-        .pass {
-            color: #00ff00;
-            font-weight: bold;
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .suspicious {
-            color: #ff3300;
-            font-weight: bold;
+        .risk-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
-        .info-panel {
-            position: absolute;
-            top: 50px;
-            right: 50px;
-            width: 90%;
-            max-width: 800px;
-            background-color: #1d1818;
-            padding: 25px;
-            border-radius: 12px;
-            color: #ddd;
-            font-size: 0.95em;
-            display: flex; 
-            gap: 30px;
+        .verdict {
+            font-size: clamp(1.3rem, 3vw, 1.8rem);
+            font-weight: 700;
         }
 
-        .info-left, .info-right {
-            flex: 1;
+        .risk-score {
+            font-size: clamp(1rem, 2vw, 1.3rem);
+            padding: 10px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
         }
 
-        .info-panel h2 { 
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.8em;
-            margin-bottom: 15px;
-            color: #00ccff;
+        .analyzed-input {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            word-break: break-all;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
         }
 
-            .info-panel p { 
+        .domain-details {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+            .domain-details p {
+                margin: 8px 0;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.85rem;
+            }
+
+            .domain-details strong {
+                color: #00ffbf;
+            }
+
+        .reasons {
+            list-style: none;
+        }
+
+            .reasons li {
+                padding: 12px 15px;
+                margin: 10px 0;
+                background: rgba(0, 0, 0, 0.3);
+                border-left: 4px solid #00ffbf;
+                border-radius: 4px;
                 line-height: 1.6;
-                font-size: 1em;
-                color: #cccccc;
             }
 
-        pre {
-            background-color: #111111;
+        .char-breakdown {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            word-break: break-all;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        /* Info Section */
+        .info-section {
+            background: rgba(30, 30, 50, 0.6);
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid rgba(0, 255, 191, 0.2);
+            margin-top: 30px;
+        }
+
+            .info-section h3 {
+                color: #00ccff;
+                margin-top: 25px;
+                margin-bottom: 15px;
+                font-size: 1.3rem;
+            }
+
+                .info-section h3:first-child {
+                    margin-top: 0;
+                }
+
+            .info-section p, .info-section li {
+                line-height: 1.8;
+                color: #d0d0d0;
+                margin-bottom: 12px;
+            }
+
+            .info-section ul {
+                margin-left: 20px;
+                margin-top: 10px;
+            }
+
+            .info-section code {
+                background: rgba(0, 255, 191, 0.1);
+                padding: 2px 6px;
+                border-radius: 4px;
+                color: #00ffbf;
+                font-family: 'JetBrains Mono', monospace;
+            }
+
+        /* Examples Section */
+        .examples {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        @media (min-width: 768px) {
+            .examples {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .example-btn {
             padding: 12px;
-            border-radius: 6px;
-            overflow-x: auto;
-        }
-                /* 🔹 ADDED — responsive breakpoints */
-        @media (max-width: 1024px) {
-            .info-panel {
-                position: static;
-                flex-direction: column;
-                align-items: stretch;
-                margin-top: 40px;
-            }
+            background: rgba(0, 255, 191, 0.1);
+            border: 1px solid rgba(0, 255, 191, 0.3);
+            border-radius: 8px;
+            color: #00ffbf;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
         }
 
-        /* 🔹 ADDED — tablet layout */
+            .example-btn:hover {
+                background: rgba(0, 255, 191, 0.2);
+                border-color: #00ffbf;
+            }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+        }
+
+        /* Mobile Optimizations */
         @media (max-width: 768px) {
-            .form-container {
-                position: static;
-                margin: 20px auto;
-                width: 95%;
-                padding: 25px;
-            }
-
-            h1 {
-                font-size: 2.2em;
-                text-align: center;
-            }
-
-            input[type="submit"] {
-                width: 100%;
-                font-size: 1.1em;
-            }
-
-            .info-panel {
-                width: 95%;
-                margin: 20px auto;
-                padding: 20px;
-                box-shadow: 0 0 20px #00ffbf;
-            }
-        }
-
-        /* 🔹 ADDED — phone layout */
-        @media (max-width: 480px) {
             body {
+                padding: 15px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .results-card {
+                padding: 20px;
+            }
+
+            .risk-header {
                 flex-direction: column;
-                align-items: center;
-                overflow-x: hidden;
-            }
-
-            .form-container, .info-panel {
-                width: 95%;
-                left: auto;
-                right: auto;
-                top: auto;
-            }
-
-            h1 {
-                font-size: 1.8em;
-            }
-
-            label, input, select {
-                font-size: 0.9em;
+                align-items: flex-start;
             }
         }
-        /* 🔹 END responsive additions */
     </style>
 </head>
 <body>
-    <canvas id="bgCanvas"></canvas>
+    <div class="container">
+        <header>
+            <h1>🎣 GotFish</h1>
+            <p class="tagline">Advanced Phishing Detection & Analysis</p>
+        </header>
 
-    <div class="form-container">
-        <h1>GotFish</h1>
-        <form method="post">
-            <label>Input Type:</label>
-            <select name="input_type">
-                <option value="url" {% if input_type=="url" %}selected{% endif %}>URL</option>
-                <option value="email" {% if input_type=="email" %}selected{% endif %}>Email Sender</option>
-            </select>
+        <div class="content-grid">
+            <!-- Analyzer Form -->
+            <div class="card">
+                <h2>Analyze Suspicious Content</h2>
+                <form method="post">
+                    <div class="form-group">
+                        <label for="input_type">What would you like to analyze?</label>
+                        <select name="input_type" id="input_type">
+                            <option value="url" {% if input_type=="url" %}selected{% endif %}>URL / Website Link</option>
+                            <option value="email" {% if input_type=="email" %}selected{% endif %}>Email Sender Address</option>
+                        </select>
+                    </div>
 
-            <input type="text" name="input_value" placeholder="Enter URL/Email" value="{{ input_value }}">
+                    <div class="form-group">
+                        <label for="input_value">Enter URL or Email Address</label>
+                        <input type="text"
+                               name="input_value"
+                               id="input_value"
+                               placeholder="e.g., https://suspicious-site.com or sender@domain.com"
+                               value="{{ input_value }}"
+                               required>
+                    </div>
 
-            <input type="submit" value="Analyze">
-        </form>
+                    <button type="submit">🔍 Analyze Now</button>
+                </form>
 
+                <!-- Test Examples -->
+                <div style="margin-top: 30px;">
+                    <h3 style="color: #00ccff; font-size: 1.1rem; margin-bottom: 15px;">Try These Examples:</h3>
+                    <div class="examples">
+                        <button class="example-btn" onclick="testExample('url', 'https://paypa1.com')">
+                            🚨 paypa1.com
+                        </button>
+                        <button class="example-btn" onclick="testExample('url', 'https://gооgle.com')">
+                            🚨 gооgle.com
+                        </button>
+                        <button class="example-btn" onclick="testExample('email', 'admin@micosoft.com')">
+                            🚨 micosoft.com
+                        </button>
+                        <button class="example-btn" onclick="testExample('url', 'https://google.com')">
+                            ✅ google.com
+                        </button>
+                        <button class="example-btn" onclick="testExample('url', 'gmaíl.com')">
+                            🚨 gmaíl.com
+                        </button>
+                        <button class="example-btn" onclick="testExample('email', 'user@yah00.com')">
+                            🚨 user@yah00.com
+                        </button>
+                        <button class="example-btn" onclick="testExample('url', 'https://xn--pple-43d.com')">
+                            🚨 https://xn--pple-43d.com
+                        </button>
+                        <button class="example-btn" onclick="testExample('url', 'g​mail.com')">
+                            🚨 g​mail.com
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Info Panel -->
+            <div class="card">
+                <h2>GotFish?</h2>
+                <p style="line-height: 1.7; color: #d0d0d0;">
+                    GotFish is a phishing detection analyzer built for identifying malicious links and emails that the naked eye might miss which threat actors often abuse this to hide their infrastructure powered by <strong style="color: #00ffbf;">DNSTwist</strong>
+                </p>
+                <ul style="margin-left: 20px; line-height: 1.8; color: #d0d0d0;">
+                    <li><strong style="color: #00ffbf;">DNSTwist Database:</strong> Pre-computed 2000+ typo variants per brand</li>
+                    <li><strong style="color: #00ffbf;">View Character Breakdown in Unicode:</strong> Character spell out mode to show the analyst Unicode code points for characters</li>
+                    <li><strong style="color: #00ffbf;">Homograph Attacks:</strong> Detects lookalike characters (е vs e, о vs o)</li>
+                    <li><strong style="color: #00ffbf;">Typosquatting:</strong> Identifies domains similar to trusted brands</li>
+                    <li><strong style="color: #00ffbf;">Suspicious TLDs:</strong> Flags commonly-abused domain extensions</li>
+                    <li><strong style="color: #00ffbf;">Punycode Domain Handling:</strong> Detects domains starting with xn--, which can hide non-ASCII characters inside URLs</li>
+                    <li><strong style="color: #00ffbf;">Risk Scoring:</strong> Calculates cumulative risk in percentage</li>
+                </ul>
+
+                <h3 style="color: #00ccff; margin-top: 25px; font-size: 1.2rem;">Risk Levels</h3>
+                <div style="margin-top: 15px; line-height: 2;">
+                    <div><strong style="color: #ff0000;">Critical (70+)</strong> - Likely phishing, avoid</div>
+                    <div><strong style="color: #ff6600;">High (40-69)</strong> - Multiple red flags detected</div>
+                    <div><strong style="color: #ffcc00;">Moderate (20-39)</strong> - Some suspicious patterns</div>
+                    <div><strong style="color: #66ff66;">Low (10-19)</strong> - Minor concerns</div>
+                    <div><strong style="color: #00ff00;">Safe (0-9)</strong> - No threats detected</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
         {% if result %}
-        <div class="report">
-            <h2>Analysis Report</h2>
-            <p>
-                <strong>{{ input_type|capitalize }}:</strong> {{ input_value }} →
-                <span class="{{ 'pass' if result[0]=='Pass ✅' else 'suspicious' }}">{{ result[0] }}</span>
-            </p>
-            <pre>{{ result[1]|join('\n') }}</pre>
+        <div class="results-card" style="border-color: {{ result.color }}">
+            <div class="risk-header">
+                <div class="verdict" style="color: {{ result.color }}">{{ result.verdict }}</div>
+                <div class="risk-score" style="border: 2px solid {{ result.color }}">
+                    Risk Score: <strong style="color: {{ result.color }}">{{ result.score }}/100</strong>
+                </div>
+            </div>
+
+            <div class="analyzed-input">
+                <strong style="color: #00ccff;">Analyzed {{ input_type|capitalize }}:</strong><br>
+                {{ input_value }}
+            </div>
+
+            {% if result.domain_info %}
+            <div class="domain-details">
+                <p><strong>Full Domain:</strong> {{ result.domain_info.full_domain }}</p>
+                <p><strong>Root Domain:</strong> {{ result.domain_info.root_domain }}</p>
+                <p><strong>Subdomain:</strong> {{ result.domain_info.subdomain }}</p>
+            </div>
+            {% endif %}
+
+            <h3 style="color: #00ccff; margin-bottom: 15px; font-size: 1.3rem;">Detection Results:</h3>
+            <ul class="reasons">
+                {% for reason in result.reasons %}
+                <li>{{ reason }}</li>
+                {% endfor %}
+            </ul>
+
+            {% if result.domain_info and result.domain_info.char_breakdown %}
+            <details style="margin-top: 20px;">
+                <summary style="cursor: pointer; color: #00ccff; font-weight: 600; margin-bottom: 10px;">
+                    🔍 View Character Breakdown (Unicode)
+                </summary>
+                <div class="char-breakdown">{{ result.domain_info.char_breakdown }}</div>
+            </details>
+            {% endif %}
         </div>
         {% endif %}
-    </div>
 
-    <div class="info-panel">
-        <div class="info-left">
-            <h2>What is GotFish?</h2>
-            <p>
-                <strong>GotFish</strong> is a phishing detection analyzer built for
-                identifying <strong>malicious links and emails</strong>. Attackers
-                often disguise their infrastructure using deceptive tricks — and
-                GotFish shines a light on them.
-            </p>
+        <!-- Educational Info -->
+        <div class="info-section">
+            <h2 style="color: #00ffbf; font-size: 1.8rem; margin-bottom: 20px;">Understanding Phishing Attacks</h2>
 
-            <h3>GotFish Detection Logic:</h3>
-            <ul>
-                <li>
-                    <strong>Punycode Domain Handling:</strong> Detects domains starting with
-                    <code>xn--</code>, which can hide non-ASCII characters inside URLs.
-                </li>
-                <li>
-                    <strong>Typo Squatting (Similarity Analysis)</strong> Compares domains to
-                    <em>trusted brands</em> (Google, Microsoft, PayPal, etc.) using
-                    string similarity scoring to catch typosquatting.
-                </li>
-                <li>
-                    <strong>Suspicious Pattern Scans:</strong> Looks for risky structures
-                    like <code>@</code> inside domains (possible redirects) or repeated
-                    dashes often used in fake domains.
-                </li>
-                <li>
-                    <strong>Character Spell-Out Mode:</strong> Every character in the
-                    input is spelled out and shown with its <strong>Unicode code point</strong>,
-                    so users can see <em>exactly</em> what’s in front of them — no more
-                    hidden tricks.
-                </li>
-                <li>
-                    <strong>Foreign Character Alerts:</strong> Warns you if a domain or
-                    email contains letters outside the standard Latin alphabet.
-                </li>
-            </ul>
-        </div>
-        <div class="info-right">
-            <h3>Why It Matters</h3>
+            <h3>About GotFish</h3>
             <p>
-                Phishing campaigns rely on visual deception. GotFish turns these tricks
-                into something <strong>obvious and undeniable</strong>, helping both
-                defenders and everyday users recognize:
-            </p>
-            <ul>
-                <li><strong>Credential harvesting attempts</strong></li>
-                <li><strong>Malicious email senders</strong></li>
-                <li><strong>Typosquatted domains</strong></li>
-                <li><strong>Unicode/IDN homograph attacks</strong></li>
-            </ul>
-
-            <p>
-                By combining <strong>automated detection</strong> with
-                <strong>human-readable analysis</strong>, GotFish bridges the gap between
-                technical defenses and user awareness — making phishing tricks easier to
-                spot and harder to fall for.
+                To learn more about how this works, please visit: <a href="https://moeblogsca.wordpress.com/2025/09/11/gotfish-phishing-detection-tool">my blog</a>
             </p>
         </div>
+
+        <footer>
+            <p>GotFish is an educational tool for phishing awareness. Always verify suspicious content through multiple sources.</p>
+        </footer>
     </div>
+
+    <script>
+        function testExample(type, value) {
+            document.getElementById('input_type').value = type;
+            document.getElementById('input_value').value = value;
+        }
+    </script>
 </body>
 </html>
-
