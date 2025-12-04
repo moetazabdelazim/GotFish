@@ -376,16 +376,28 @@
                     <h3 style="color: #00ccff; font-size: 1.1rem; margin-bottom: 15px;">Try These Examples:</h3>
                     <div class="examples">
                         <button class="example-btn" onclick="testExample('url', 'https://paypa1.com')">
-                            🚨 paypa1.com (DNSTwist)
+                            🚨 paypa1.com
                         </button>
                         <button class="example-btn" onclick="testExample('url', 'https://gооgle.com')">
-                            🚨 gооgle.com (homograph)
+                            🚨 gооgle.com
                         </button>
                         <button class="example-btn" onclick="testExample('email', 'admin@micosoft.com')">
-                            🚨 micosoft.com (typo)
+                            🚨 micosoft.com
                         </button>
                         <button class="example-btn" onclick="testExample('url', 'https://google.com')">
-                            ✅ google.com (legitimate)
+                            ✅ google.com
+                        </button>
+                        <button class="example-btn" onclick="testExample('url', 'gmaíl.com')">
+                            🚨 gmaíl.com
+                        </button>
+                        <button class="example-btn" onclick="testExample('email', 'user@yah00.com')">
+                            🚨 user@yah00.com
+                        </button>
+                        <button class="example-btn" onclick="testExample('url', 'https://xn--pple-43d.com')">
+                            🚨 https://xn--pple-43d.com
+                        </button>
+                        <button class="example-btn" onclick="testExample('url', 'g​mail.com')">
+                            🚨 g​mail.com
                         </button>
                     </div>
                 </div>
@@ -399,7 +411,7 @@
                 </p>
                 <ul style="margin-left: 20px; line-height: 1.8; color: #d0d0d0;">
                     <li><strong style="color: #00ffbf;">DNSTwist Database:</strong> Pre-computed 2000+ typo variants per brand</li>
-                    <li><strong style="color: #00ffbf;">View Character Breakdown in Unicode:</strong> Every character in the input is spelled out and shown with its Unicode code point, so users can see exactly what’s in front of them — no more hidden tricks.</li>
+                    <li><strong style="color: #00ffbf;">View Character Breakdown in Unicode:</strong> Character spell out mode to show the analyst Unicode code points for characters</li>
                     <li><strong style="color: #00ffbf;">Homograph Attacks:</strong> Detects lookalike characters (е vs e, о vs o)</li>
                     <li><strong style="color: #00ffbf;">Typosquatting:</strong> Identifies domains similar to trusted brands</li>
                     <li><strong style="color: #00ffbf;">Suspicious TLDs:</strong> Flags commonly-abused domain extensions</li>
@@ -465,7 +477,10 @@
 
             <h3>About GotFish</h3>
             <p>
-                To learn more about how this works, please visit: https://moeblogsca.wordpress.com/2025/09/11/gotfish-phishing-detection-tool/
+
+
+                To learn more about how this works, please visit: <a href="https://moeblogsca.wordpress.com/2025/09/11/gotfish-phishing-detection-tool">my blog</a>
+
             </p>
         </div>
 
