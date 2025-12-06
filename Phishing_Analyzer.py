@@ -10,7 +10,7 @@ BRAND_KEYWORDS = [
     "google", "gmail", "microsoft", "outlook", "hotmail",
     "yahoo", "apple", "icloud", "paypal", "amazon",
     "facebook", "instagram", "twitter", "linkedin",
-    "netflix", "wordpress"
+    "netflix", "wordpress", "moeblogs"
 ]
 
 # DNSTwist permutation database
@@ -383,4 +383,5 @@ def analyze_email(sender: str) -> dict:
             'reasons': [f'Email parsing failed: {str(e)}'],
             'domain_info': {}
         }
+
 
