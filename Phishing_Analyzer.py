@@ -10,7 +10,7 @@ BRAND_KEYWORDS = [
     "google", "gmail", "microsoft", "outlook", "hotmail",
     "yahoo", "apple", "icloud", "paypal", "amazon",
     "facebook", "instagram", "twitter", "linkedin",
-    "netflix", "bank", "secure", "login", "account"
+    "netflix", "wordpress"
 ]
 
 # DNSTwist permutation database
@@ -22,7 +22,7 @@ LEGITIMATE_DOMAINS = [
     "google.com", "gmail.com", "microsoft.com", "outlook.com",
     "yahoo.com", "apple.com", "icloud.com", "paypal.com",
     "amazon.com", "facebook.com", "instagram.com", "twitter.com",
-    "linkedin.com", "netflix.com"
+    "linkedin.com", "netflix.com", "wordpress.com"
 ]
 
 # Suspicious TLDs
@@ -383,3 +383,4 @@ def analyze_email(sender: str) -> dict:
             'reasons': [f'Email parsing failed: {str(e)}'],
             'domain_info': {}
         }
+
