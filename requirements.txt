@@ -1,7 +1,2 @@
 Flask==2.3.3
-tldextract
 requests
-idna
-dnstwist
-rapidfuzz
-

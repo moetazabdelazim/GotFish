@@ -2,500 +2,960 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>GotFish - Phishing Detection Analyzer</title>
+    <title>GOTFISH — Forensic Link Reader</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --paper: #F2EFE4;
+            --ink: #16130E;
+            --ink-soft: #4A453B;
+            --rule: #16130E;
+            --hairline: #C9C3B2;
+            --signal: #D8232A; /* reserved: actionable items + flagged evidence */
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        html {
+            background: var(--paper);
+        }
+
         body {
-            font-family: 'Space Grotesk', sans-serif;
-            background: linear-gradient(135deg, #0a0e27 0%, #1a1a2e 100%);
-            color: #e0e0e0;
-            min-height: 100vh;
-            padding: 20px;
+            font-family: 'IBM Plex Mono', monospace;
+            color: var(--ink);
+            background: var(--paper);
+            font-size: 15px;
+            line-height: 1.55;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+        ::selection {
+            background: var(--signal);
+            color: var(--paper);
         }
 
-        /* Header */
+        /* ============ MASTHEAD ============ */
+
         header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding: 20px 0;
+            padding: 32px 24px 28px;
+            border-bottom: 6px solid var(--rule);
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto auto;
+            align-items: end;
+            gap: 28px;
+        }
+
+        @media (max-width: 900px) {
+            header {
+                grid-template-columns: 1fr;
+                align-items: start;
+            }
+        }
+
+        /* The fish-on-rod mark: woodcut-style line art, drawn inline. */
+        .rod-mark {
+            width: clamp(120px, 16vw, 190px);
+            height: auto;
+            display: block;
+        }
+
+        .rod-mark .rod,
+        .rod-mark .line,
+        .rod-mark .hook {
+            stroke: var(--ink);
+            fill: none;
+        }
+
+        .rod-mark .rod {
+            stroke-width: 7;
+            stroke-linecap: round;
+        }
+
+        .rod-mark .line {
+            stroke-width: 3;
+        }
+
+        .rod-mark .hook {
+            stroke-width: 3.5;
+            stroke-linecap: round;
+        }
+
+        .rod-mark .fish {
+            fill: var(--signal);
+            stroke: none;
+        }
+
+        .rod-mark .eye {
+            fill: var(--paper);
+            stroke: none;
         }
 
         h1 {
-            font-size: clamp(2rem, 5vw, 3.5rem);
-            background: linear-gradient(135deg, #00ffbf 0%, #00ccff 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: 700;
-            margin-bottom: 10px;
-            text-shadow: 0 0 30px rgba(0, 255, 191, 0.3);
+            font-family: 'Anton', sans-serif;
+            font-size: clamp(3.2rem, 11vw, 8.5rem);
+            line-height: 0.92;
+            letter-spacing: -0.01em;
+            text-transform: uppercase;
         }
 
-        .tagline {
-            color: #00ccff;
-            font-size: clamp(0.9rem, 2vw, 1.1rem);
-            opacity: 0.9;
+        h1 .fish-mark {
+            color: var(--signal);
         }
 
-        /* Main Content Grid */
-        .content-grid {
+        .masthead-aside {
+            text-align: right;
+            font-size: 12px;
+            line-height: 1.7;
+            max-width: 260px;
+            color: var(--ink-soft);
+            border-left: 1px solid var(--rule);
+            padding-left: 20px;
+        }
+
+        .masthead-aside strong {
+            color: var(--ink);
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 11px;
+        }
+
+        /* ============ LAYOUT ============ */
+
+        .sheet {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 30px;
-            margin-bottom: 40px;
+            grid-template-columns: 420px minmax(0, 1fr);
+            min-height: 60vh;
         }
 
-        @media (min-width: 968px) {
-            .content-grid {
-                grid-template-columns: 1fr 1fr;
+        @media (max-width: 900px) {
+            .sheet {
+                grid-template-columns: 1fr;
             }
         }
 
-        /* Card Styling */
-        .card {
-            background: rgba(30, 30, 50, 0.6);
-            border-radius: 16px;
-            padding: 30px;
-            border: 1px solid rgba(0, 255, 191, 0.2);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
+        /* Left column: the intake desk */
+        .intake {
+            border-right: 6px solid var(--rule);
+            padding: 28px 24px 48px;
         }
 
-            .card h2 {
-                color: #00ffbf;
-                font-size: clamp(1.3rem, 3vw, 1.8rem);
-                margin-bottom: 20px;
-                font-weight: 600;
+        @media (max-width: 900px) {
+            .intake {
+                border-right: none;
+                border-bottom: 6px solid var(--rule);
             }
+        }
 
-        /* Form Styling */
-        .form-group {
-            margin-bottom: 20px;
+        .col-label {
+            font-family: 'Anton', sans-serif;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            border-bottom: 1px solid var(--rule);
+            padding-bottom: 8px;
+            margin-bottom: 22px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .col-label .no {
+            color: var(--signal);
         }
 
         label {
             display: block;
-            margin-bottom: 8px;
-            color: #00ccff;
-            font-weight: 600;
-            font-size: 0.95rem;
-        }
-
-        select, input[type="text"] {
-            width: 100%;
-            padding: 14px 16px;
-            background: rgba(10, 10, 30, 0.8);
-            border: 2px solid rgba(0, 255, 191, 0.3);
-            border-radius: 8px;
-            color: #e0e0e0;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-        }
-
-            select:focus, input[type="text"]:focus {
-                outline: none;
-                border-color: #00ffbf;
-                box-shadow: 0 0 20px rgba(0, 255, 191, 0.3);
-            }
-
-            input[type="text"]::placeholder {
-                color: rgba(255, 255, 255, 0.3);
-            }
-
-        button {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #00ffbf 0%, #00ccff 100%);
-            border: none;
-            border-radius: 8px;
-            color: #0a0e27;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            font-size: 11px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.14em;
+            margin-bottom: 10px;
+            color: var(--ink-soft);
         }
 
-            button:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 25px rgba(0, 255, 191, 0.4);
-            }
-
-            button:active {
-                transform: translateY(0);
-            }
-
-        /* Results Card */
-        .results-card {
-            background: rgba(30, 30, 50, 0.9);
-            border-radius: 16px;
-            padding: 30px;
-            border: 2px solid;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-            margin-top: 30px;
-            animation: slideIn 0.5s ease;
+        input[type="text"] {
+            width: 100%;
+            padding: 14px 12px;
+            background: transparent;
+            border: 2px solid var(--ink);
+            border-radius: 0;
+            color: var(--ink);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 14px;
         }
 
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--signal);
+            box-shadow: 4px 4px 0 var(--ink);
         }
 
-        .risk-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 15px;
+        input[type="text"]::placeholder {
+            color: var(--ink-soft);
+            opacity: 0.55;
         }
 
-        .verdict {
-            font-size: clamp(1.3rem, 3vw, 1.8rem);
+        .submit-btn {
+            width: 100%;
+            margin-top: 16px;
+            padding: 16px;
+            background: var(--signal);
+            color: var(--paper);
+            border: 2px solid var(--signal);
+            border-radius: 0;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
             font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            cursor: pointer;
         }
 
-        .risk-score {
-            font-size: clamp(1rem, 2vw, 1.3rem);
-            padding: 10px 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 8px;
-            font-family: 'JetBrains Mono', monospace;
+        .submit-btn:hover {
+            background: var(--ink);
+            border-color: var(--ink);
         }
 
-        .analyzed-input {
-            background: rgba(0, 0, 0, 0.4);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            word-break: break-all;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9rem;
+        .submit-btn:active {
+            transform: translate(2px, 2px);
         }
 
-        .domain-details {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+        /* Specimens */
+        .specimens {
+            margin-top: 44px;
         }
 
-            .domain-details p {
-                margin: 8px 0;
-                font-family: 'JetBrains Mono', monospace;
-                font-size: 0.85rem;
+        .specimens h2 {
+            font-family: 'Anton', sans-serif;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            border-bottom: 1px solid var(--rule);
+            padding-bottom: 8px;
+            margin-bottom: 6px;
+        }
+
+        .specimen-btn {
+            display: block;
+            width: 100%;
+            background: none;
+            border: none;
+            border-bottom: 1px solid var(--hairline);
+            padding: 10px 2px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12.5px;
+            color: var(--ink);
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .specimen-btn::before {
+            content: "→ ";
+            color: var(--hairline);
+        }
+
+        .specimen-btn:hover {
+            color: var(--signal);
+        }
+
+        .specimen-btn:hover::before {
+            color: var(--signal);
+        }
+
+        .specimen-btn .tech {
+            color: var(--ink-soft);
+            font-size: 11px;
+            font-style: italic;
+        }
+
+        /* Right column: reading room */
+        .reading {
+            padding: 28px 32px 48px;
+        }
+
+        .brief {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 32px;
+        }
+
+        @media (max-width: 640px) {
+            .brief {
+                grid-template-columns: 1fr;
             }
+        }
 
-            .domain-details strong {
-                color: #00ffbf;
-            }
+        .brief h2 {
+            font-family: 'Anton', sans-serif;
+            font-size: clamp(1.6rem, 3vw, 2.2rem);
+            text-transform: uppercase;
+            line-height: 1.05;
+            margin-bottom: 16px;
+        }
 
-        .reasons {
+        .brief p {
+            color: var(--ink-soft);
+            margin-bottom: 14px;
+            max-width: 52ch;
+        }
+
+        .brief .kicker {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--ink);
+            border-left: 3px solid var(--signal);
+            padding-left: 10px;
+            margin-bottom: 18px;
+        }
+
+        .checklist {
             list-style: none;
         }
 
-            .reasons li {
-                padding: 12px 15px;
-                margin: 10px 0;
-                background: rgba(0, 0, 0, 0.3);
-                border-left: 4px solid #00ffbf;
-                border-radius: 4px;
-                line-height: 1.6;
-            }
+        .checklist li {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--hairline);
+            font-size: 13px;
+        }
 
-        .char-breakdown {
-            background: rgba(0, 0, 0, 0.5);
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
+        .checklist li::before {
+            content: attr(data-n) " — ";
+            font-weight: 700;
+            color: var(--ink-soft);
+        }
+
+        /* ============ RESULTS: THE EVIDENCE SHEET ============ */
+
+        .results {
+            margin: 0 24px 48px;
+            border: 2px solid var(--ink);
+        }
+
+        .results-banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 16px;
+            flex-wrap: wrap;
+            background: var(--ink);
+            color: var(--paper);
+            padding: 14px 20px;
+        }
+
+        .results-banner .doc-title {
+            font-family: 'Anton', sans-serif;
+            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .results-banner .doc-type {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            color: var(--hairline);
+        }
+
+        .analyzed-input {
+            padding: 16px 20px;
+            border-bottom: 2px solid var(--ink);
             word-break: break-all;
-            max-height: 200px;
-            overflow-y: auto;
+            font-size: 14px;
+            font-weight: 500;
         }
 
-        /* Info Section */
-        .info-section {
-            background: rgba(30, 30, 50, 0.6);
-            border-radius: 16px;
-            padding: 30px;
-            border: 1px solid rgba(0, 255, 191, 0.2);
-            margin-top: 30px;
+        .analyzed-input .lbl {
+            display: block;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            color: var(--ink-soft);
+            margin-bottom: 4px;
         }
 
-            .info-section h3 {
-                color: #00ccff;
-                margin-top: 25px;
-                margin-bottom: 15px;
-                font-size: 1.3rem;
-            }
+        .section {
+            border-bottom: 1px solid var(--rule);
+            padding: 22px 20px;
+        }
 
-                .info-section h3:first-child {
-                    margin-top: 0;
-                }
+        .section:last-child {
+            border-bottom: none;
+        }
 
-            .info-section p, .info-section li {
-                line-height: 1.8;
-                color: #d0d0d0;
-                margin-bottom: 12px;
-            }
+        .section-title {
+            font-family: 'Anton', sans-serif;
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 16px;
+        }
 
-            .info-section ul {
-                margin-left: 20px;
-                margin-top: 10px;
-            }
+        .section-title .no {
+            color: var(--signal);
+            margin-right: 10px;
+        }
 
-            .info-section code {
-                background: rgba(0, 255, 191, 0.1);
-                padding: 2px 6px;
-                border-radius: 4px;
-                color: #00ffbf;
-                font-family: 'JetBrains Mono', monospace;
-            }
-
-        /* Examples Section */
-        .examples {
+        .detail-row {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-            margin-top: 15px;
+            grid-template-columns: 190px minmax(0, 1fr);
+            gap: 8px;
+            padding: 6px 0;
+            border-bottom: 1px solid var(--hairline);
+            font-size: 13px;
+            word-break: break-all;
         }
 
-        @media (min-width: 768px) {
-            .examples {
-                grid-template-columns: 1fr 1fr;
+        @media (max-width: 640px) {
+            .detail-row {
+                grid-template-columns: 1fr;
+                gap: 0;
             }
         }
 
-        .example-btn {
-            padding: 12px;
-            background: rgba(0, 255, 191, 0.1);
-            border: 1px solid rgba(0, 255, 191, 0.3);
-            border-radius: 8px;
-            color: #00ffbf;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
+        .detail-row strong {
+            font-weight: 500;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--ink-soft);
+            padding-top: 2px;
+        }
+
+        /* Findings: numbered evidence entries */
+        .reasons {
+            list-style: none;
+            counter-reset: evidence;
+        }
+
+        .reasons li {
+            counter-increment: evidence;
+            padding: 10px 0 10px 44px;
+            border-bottom: 1px solid var(--hairline);
+            position: relative;
+            font-size: 13.5px;
+        }
+
+        .reasons li::before {
+            content: "E" counter(evidence, decimal-leading-zero);
+            position: absolute;
+            left: 0;
+            top: 10px;
+            font-weight: 700;
+            font-size: 12px;
+            color: var(--signal);
+        }
+
+        .reasons li:last-child {
+            border-bottom: none;
+        }
+
+        .quiet {
+            color: var(--ink-soft);
+            font-style: italic;
+            font-size: 13px;
+        }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 12.5px;
+        }
+
+        .data-table th {
             text-align: left;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--paper);
+            background: var(--ink);
+            padding: 8px 10px;
+            font-weight: 500;
         }
 
-            .example-btn:hover {
-                background: rgba(0, 255, 191, 0.2);
-                border-color: #00ffbf;
-            }
+        .data-table td {
+            padding: 7px 10px;
+            border-bottom: 1px solid var(--hairline);
+            vertical-align: top;
+        }
 
-        /* Footer */
+        .data-table td.index-cell {
+            color: var(--ink-soft);
+            width: 60px;
+        }
+
+        .data-table td.codepoint-cell {
+            color: var(--signal);
+            font-weight: 700;
+            width: 100px;
+        }
+
+        .char-table-wrapper {
+            max-height: 280px;
+            overflow-y: auto;
+            margin-top: 12px;
+            border: 1px solid var(--rule);
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 3px 8px;
+            border: 1px solid var(--ink);
+            color: var(--ink);
+            font-size: 11.5px;
+            margin: 0 6px 6px 0;
+        }
+
+        .tag-warn {
+            border-color: var(--signal);
+            color: var(--signal);
+            font-weight: 700;
+        }
+
+        .tag-group {
+            margin-bottom: 14px;
+        }
+
+        .tag-group .lbl {
+            display: block;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            color: var(--ink-soft);
+            margin-bottom: 8px;
+        }
+
+        .subhead {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            margin: 20px 0 4px;
+            color: var(--ink);
+        }
+
+        .error-note {
+            color: var(--signal);
+            font-weight: 700;
+        }
+
+        .scan-link {
+            color: var(--signal);
+            font-weight: 700;
+            text-decoration: none;
+            border-bottom: 2px solid var(--signal);
+            word-break: break-all;
+        }
+
+        .scan-link:hover {
+            color: var(--ink);
+            border-color: var(--ink);
+        }
+
+        /* ============ FURTHER READING (Fig. 3) ============ */
+
+        .further {
+            border-top: 6px solid var(--rule);
+            padding: 28px 24px 40px;
+        }
+
+        .further-inner {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 32px;
+            align-items: center;
+        }
+
+        @media (max-width: 900px) {
+            .further-inner {
+                grid-template-columns: 1fr;
+                align-items: start;
+            }
+        }
+
+        .further-inner p {
+            color: var(--ink-soft);
+            max-width: 60ch;
+            font-size: 14px;
+        }
+
+        .blog-link {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            font-weight: 700;
+            color: var(--signal);
+            text-decoration: none;
+            border-bottom: 2px solid var(--signal);
+            padding-bottom: 3px;
+            white-space: nowrap;
+        }
+
+        .blog-link:hover {
+            color: var(--ink);
+            border-color: var(--ink);
+        }
+
+        /* ============ FOOTER ============ */
+
         footer {
-            text-align: center;
-            margin-top: 50px;
-            padding: 20px;
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 0.9rem;
+            border-top: 6px solid var(--rule);
+            padding: 22px 24px;
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--ink-soft);
         }
 
-        /* Mobile Optimizations */
-        @media (max-width: 768px) {
-            body {
-                padding: 15px;
-            }
+        footer a {
+            color: var(--ink);
+        }
 
-            .card {
-                padding: 20px;
-            }
-
-            .results-card {
-                padding: 20px;
-            }
-
-            .risk-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
+        footer a:hover {
+            color: var(--signal);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🎣 GotFish</h1>
-            <p class="tagline">Advanced Phishing Detection & Analysis</p>
-        </header>
 
-        <div class="content-grid">
-            <!-- Analyzer Form -->
-            <div class="card">
-                <h2>Analyze Suspicious Content</h2>
-                <form method="post">
-                    <div class="form-group">
-                        <label for="input_type">What would you like to analyze?</label>
-                        <select name="input_type" id="input_type">
-                            <option value="url" {% if input_type=="url" %}selected{% endif %}>URL / Website Link</option>
-                            <option value="email" {% if input_type=="email" %}selected{% endif %}>Email Sender Address</option>
-                        </select>
-                    </div>
+    <header>
+        <h1>Got<span class="fish-mark">Fish</span></h1>
+        <svg class="rod-mark" viewBox="0 0 220 180" role="img" aria-label="A fishing rod with a fish on the line">
+            <!-- bent rod -->
+            <path class="rod" d="M18 14 Q 96 44 172 72"/>
+            <!-- butt / handle -->
+            <path class="rod" d="M18 14 L 44 25" stroke-width="9"/>
+            <!-- fishing line -->
+            <path class="line" d="M172 72 L 168 112"/>
+            <!-- hook -->
+            <path class="hook" d="M168 112 q 1 12 -9 12 q -8 0 -8 -7"/>
+            <!-- the catch -->
+            <g class="fish">
+                <path d="M118 148 C 131 133 157 133 172 148 C 157 163 131 163 118 148 Z"/>
+                <path d="M118 148 L 100 136 L 106 148 L 100 160 Z"/>
+            </g>
+            <circle class="eye" cx="162" cy="144" r="3"/>
+        </svg>
+        <div class="masthead-aside">
+            <strong>What this is</strong>
+            A reading room for suspicious URLs and sender addresses. Paste the thing. Get the characters, the structure, the lookalikes. The judgment call stays yours.
+        </div>
+    </header>
 
-                    <div class="form-group">
-                        <label for="input_value">Enter URL or Email Address</label>
-                        <input type="text"
-                               name="input_value"
-                               id="input_value"
-                               placeholder="e.g., https://suspicious-site.com or sender@domain.com"
-                               value="{{ input_value }}"
-                               required>
-                    </div>
+    <div class="sheet">
+        <!-- Intake -->
+        <section class="intake">
+            <div class="col-label"><span>Intake</span></div>
 
-                    <button type="submit">🔍 Analyze Now</button>
-                </form>
+            <form method="post">
+                <div class="form-group">
+                    <label for="input_value">URL, domain, or sender address</label>
+                    <input type="text"
+                           name="input_value"
+                           id="input_value"
+                           placeholder="paypa1.com — or sender@domain.com"
+                           value="{{ input_value }}"
+                           required>
+                </div>
+                <button type="submit" class="submit-btn">Run the analysis</button>
+            </form>
 
-                <!-- Test Examples -->
-                <div style="margin-top: 30px;">
-                    <h3 style="color: #00ccff; font-size: 1.1rem; margin-bottom: 15px;">Try These Examples:</h3>
-                    <div class="examples">
-                        <button class="example-btn" onclick="testExample('url', 'https://paypa1.com')">
-                            🚨 paypa1.com
-                        </button>
-                        <button class="example-btn" onclick="testExample('url', 'https://gооgle.com')">
-                            🚨 gооgle.com
-                        </button>
-                        <button class="example-btn" onclick="testExample('email', 'admin@micosoft.com')">
-                            🚨 micosoft.com
-                        </button>
-                        <button class="example-btn" onclick="testExample('url', 'https://google.com')">
-                            ✅ google.com
-                        </button>
-                        <button class="example-btn" onclick="testExample('url', 'gmaíl.com')">
-                            🚨 gmaíl.com
-                        </button>
-                        <button class="example-btn" onclick="testExample('email', 'user@yah00.com')">
-                            🚨 user@yah00.com
-                        </button>
-                        <button class="example-btn" onclick="testExample('url', 'https://xn--pple-43d.com')">
-                            🚨 https://xn--pple-43d.com
-                        </button>
-                        <button class="example-btn" onclick="testExample('url', 'g​mail.com')">
-                            🚨 g​mail.com
-                        </button>
-                    </div>
+            <div class="specimens">
+                <h2>Specimens — tricks seen in the wild</h2>
+                <button class="specimen-btn" data-value="paypa1.com">paypa1.com <span class="tech">— digit for letter</span></button>
+                <button class="specimen-btn" data-value="rnicrosoft.com">rnicrosoft.com <span class="tech">— "rn" posing as "m"</span></button>
+                <button class="specimen-btn" data-value="ɢoogle.com">ɢoogle.com <span class="tech">— small-capital G, 2016 spam run</span></button>
+                <button class="specimen-btn" data-value="https://gооgle.com">https://gооgle.com <span class="tech">— Cyrillic о</span></button>
+                <button class="specimen-btn" data-value="micros0ft.com">micros0ft.com <span class="tech">— zero for O</span></button>
+                <button class="specimen-btn" data-value="netf1ix.com">netf1ix.com <span class="tech">— one for L</span></button>
+                <button class="specimen-btn" data-value="xn--80ak6aa92e.com">xn--80ak6aa92e.com <span class="tech">— punycode "аррle.com"</span></button>
+                <button class="specimen-btn" data-value="login-paypal.secure-auth.tk">login-paypal.secure-auth.tk <span class="tech">— brand parked in a free TLD</span></button>
+                <button class="specimen-btn" data-value="paypal.com.verify-account.example-update.net">paypal.com.verify-account.example-update.net <span class="tech">— subdomain stuffing</span></button>
+                <button class="specimen-btn" data-value='"PayPal" <service@paypa1.com>'>"PayPal" &lt;service@paypa1.com&gt; <span class="tech">— display-name spoof</span></button>
+            </div>
+        </section>
+
+        <!-- Briefing -->
+        <section class="reading">
+            <div class="col-label"><span>The Brief</span></div>
+            <div class="brief">
+                <div>
+                    <p class="kicker">What the machine checks</p>
+                    <h2>Read the domain before the domain reads you.</h2>
+                    <p>
+                        Every input is spelled out character by character, split into scheme, subdomain, and root domain, then compared against a list of brands that phishers love to imitate. Punycode is decoded. Unicode lookalikes are named. Registered look-alike domains are enumerated through the public dnstwist.it service.
+                    </p>
+                    <p>
+                        GotFish deliberately refuses to say "safe" or "malicious." A tool that renders verdicts trains you to stop thinking. This one lays out the evidence and leaves the thinking intact.
+                    </p>
+                </div>
+                <div>
+                    <p class="kicker">What you check</p>
+                    <ul class="checklist">
+                        <li data-n="01">Confusable characters — Cyrillic о is not Latin o.</li>
+                        <li data-n="02">The root domain — is it actually operated by the brand?</li>
+                        <li data-n="03">Unrelated TLDs — why would PayPal write from a .tk?</li>
+                        <li data-n="04">Display names — does the sender name match the sending domain?</li>
+                        <li data-n="05">Subdomain stuffing — brands parked left of the real registrant.</li>
+                    </ul>
                 </div>
             </div>
+        </section>
+    </div>
 
-            <!-- Info Panel -->
-            <div class="card">
-                <h2>GotFish?</h2>
-                <p style="line-height: 1.7; color: #d0d0d0;">
-                    GotFish is a phishing awareness tool that may be utilized by normal users or analysts. Built for identifying malicious links and emails that the naked eye might miss which threat actors often abuse this to hide their infrastructure. For any questions, inquries or to make an entry in the brand_keyword database, https://moeblogsca.wordpress.com/contact/.
-                </p>
-                <ul style="margin-left: 20px; line-height: 1.8; color: #d0d0d0;">
-                    <li><strong style="color: #00ffbf;">DNSTwist Database:</strong> Pre-computed 2000+ typo variants per brand</li>
-                    <li><strong style="color: #00ffbf;">View Character Breakdown in Unicode:</strong> Character spell out mode to show the analyst Unicode code points for characters</li>
-                    <li><strong style="color: #00ffbf;">Homograph Attacks:</strong> Detects lookalike characters (е vs e, о vs o)</li>
-                    <li><strong style="color: #00ffbf;">Typosquatting:</strong> Identifies domains similar to trusted brands</li>
-                    <li><strong style="color: #00ffbf;">Suspicious TLDs:</strong> Flags commonly-abused domain extensions</li>
-                    <li><strong style="color: #00ffbf;">Punycode Domain Handling:</strong> Detects domains starting with xn--, which can hide non-ASCII characters inside URLs</li>
-                    <li><strong style="color: #00ffbf;">Risk Scoring:</strong> Calculates cumulative risk in percentage</li>
-                </ul>
-
-                <h3 style="color: #00ccff; margin-top: 25px; font-size: 1.2rem;">Risk Levels</h3>
-                <div style="margin-top: 15px; line-height: 2;">
-                    <div><strong style="color: #ff0000;">Critical (70+)</strong> - Likely phishing, avoid</div>
-                    <div><strong style="color: #ff6600;">High (40-69)</strong> - Multiple red flags detected</div>
-                    <div><strong style="color: #ffcc00;">Moderate (20-39)</strong> - Some suspicious patterns</div>
-                    <div><strong style="color: #66ff66;">Low (10-19)</strong> - Minor concerns</div>
-                    <div><strong style="color: #00ff00;">Safe (0-9)</strong> - No threats detected</div>
-                </div>
-            </div>
+    <!-- Results -->
+    {% if result %}
+    <section class="results">
+        <div class="results-banner">
+            <span class="doc-title">Evidence Sheet</span>
+            <span class="doc-type">{{ result.spelled_out.input_type or 'Unknown input' }}</span>
         </div>
 
-        <!-- Results Section -->
-        {% if result %}
-        <div class="results-card" style="border-color: {{ result.color }}">
-            <div class="risk-header">
-                <div class="verdict" style="color: {{ result.color }}">{{ result.verdict }}</div>
-                <div class="risk-score" style="border: 2px solid {{ result.color }}">
-                    Risk Score: <strong style="color: {{ result.color }}">{{ result.score }}/100</strong>
-                </div>
-            </div>
+        <div class="analyzed-input">
+            <span class="lbl">Exhibit A — the analyzed input</span>
+            {{ input_value }}
+        </div>
 
-            <div class="analyzed-input">
-                <strong style="color: #00ccff;">Analyzed {{ input_type|capitalize }}:</strong><br>
-                {{ input_value }}
-            </div>
+        <!-- Spelled-out Input -->
+        <div class="section">
+            <div class="section-title"><span class="no">01</span>Spelled-out input</div>
+            {% if result.spelled_out.input_type == "URL / Website Link" %}
+                <div class="detail-row"><strong>Scheme</strong> {{ result.spelled_out.scheme }}</div>
+                <div class="detail-row"><strong>Network location</strong> {{ result.spelled_out.netloc }}</div>
+                <div class="detail-row"><strong>Path</strong> {{ result.spelled_out.path or "/" }}</div>
+                <div class="detail-row"><strong>Query</strong> {{ result.spelled_out.query or "None" }}</div>
+                <div class="detail-row"><strong>Full domain</strong> {{ result.spelled_out.full_domain }}</div>
+                <div class="detail-row"><strong>Root domain</strong> {{ result.spelled_out.root_domain }}</div>
+                <div class="detail-row"><strong>Subdomain</strong> {{ result.spelled_out.subdomain or "None" }}</div>
+                {% if result.spelled_out.punycode_decoded %}
+                <div class="detail-row"><strong>IDN decoded</strong> {{ result.spelled_out.punycode_decoded }}</div>
+                {% endif %}
+            {% else %}
+                <div class="detail-row"><strong>Valid format</strong> {{ result.spelled_out.valid_format }}</div>
+                <div class="detail-row"><strong>Display name</strong> {{ result.spelled_out.display_name or "None" }}</div>
+                <div class="detail-row"><strong>Local part</strong> {{ result.spelled_out.local_part }}</div>
+                <div class="detail-row"><strong>Domain</strong> {{ result.spelled_out.domain }}</div>
+                <div class="detail-row"><strong>Root domain</strong> {{ result.spelled_out.root_domain }}</div>
+                <div class="detail-row"><strong>Subdomain</strong> {{ result.spelled_out.subdomain or "None" }}</div>
+                <div class="detail-row"><strong>@ count</strong> {{ result.spelled_out.at_count }}</div>
+            {% endif %}
 
-            {% if result.domain_info %}
-            <div class="domain-details">
-                <p><strong>Full Domain:</strong> {{ result.domain_info.full_domain }}</p>
-                <p><strong>Root Domain:</strong> {{ result.domain_info.root_domain }}</p>
-                <p><strong>Subdomain:</strong> {{ result.domain_info.subdomain }}</p>
+            {% if result.spelled_out.character_breakdown %}
+            <h4 class="subhead">Character breakdown — every glyph, indexed</h4>
+            <div class="char-table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Character</th>
+                            <th>Codepoint</th>
+                            <th>Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in result.spelled_out.character_breakdown %}
+                        <tr>
+                            <td class="index-cell">{{ item.index }}</td>
+                            <td>{{ item.character }}</td>
+                            <td class="codepoint-cell">{{ item.codepoint }}</td>
+                            <td>{{ item.name }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Observations -->
+        <div class="section">
+            <div class="section-title"><span class="no">02</span>Analyst observations</div>
+            {% if result.observations %}
+            <ul class="reasons">
+                {% for observation in result.observations %}
+                <li>{{ observation }}</li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="quiet">No notable observations.</p>
+            {% endif %}
+        </div>
+
+        <!-- Homograph & Brand Similarity -->
+        {% if result.homograph_and_brand_similarity %}
+        <div class="section">
+            <div class="section-title"><span class="no">03</span>Homographs & brand similarity</div>
+
+            {% if result.homograph_and_brand_similarity.lookalike_characters %}
+            <div class="tag-group">
+                <span class="lbl">Lookalike characters</span>
+                {% for item in result.homograph_and_brand_similarity.lookalike_characters %}
+                <span class="tag tag-warn">{{ item.character }} ({{ item.codepoint }}) → {{ item.resembles }}</span>
+                {% endfor %}
             </div>
             {% endif %}
 
-            <h3 style="color: #00ccff; margin-bottom: 15px; font-size: 1.3rem;">Detection Results:</h3>
+            {% if result.homograph_and_brand_similarity.brand_matches %}
+            <div class="tag-group">
+                <span class="lbl">Brand references</span>
+                {% for match in result.homograph_and_brand_similarity.brand_matches %}
+                <span class="tag">{{ match.brand }} — {{ match.match_type }}{% if match.similarity is defined %} · {{ match.similarity }}{% endif %}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if result.homograph_and_brand_similarity.findings %}
             <ul class="reasons">
-                {% for reason in result.reasons %}
-                <li>{{ reason }}</li>
+                {% for finding in result.homograph_and_brand_similarity.findings %}
+                <li>{{ finding }}</li>
                 {% endfor %}
             </ul>
-
-            {% if result.domain_info and result.domain_info.char_breakdown %}
-            <details style="margin-top: 20px;">
-                <summary style="cursor: pointer; color: #00ccff; font-weight: 600; margin-bottom: 10px;">
-                    🔍 View Character Breakdown (Unicode)
-                </summary>
-                <div class="char-breakdown">{{ result.domain_info.char_breakdown }}</div>
-            </details>
+            {% else %}
+            <p class="quiet">No homograph or brand-similarity indicators found.</p>
             {% endif %}
         </div>
         {% endif %}
 
-        <!-- Educational Info -->
-        <div class="info-section">
-            <h2 style="color: #00ffbf; font-size: 1.8rem; margin-bottom: 20px;">Understanding Phishing Attacks</h2>
+        <!-- Subdomain Spoofing -->
+        {% if result.subdomain_spoofing %}
+        <div class="section">
+            <div class="section-title"><span class="no">04</span>Subdomain spoofing</div>
 
-            <h3>About GotFish</h3>
-            <p>
+            {% if result.subdomain_spoofing.subdomain_parts %}
+            <div class="detail-row"><strong>Subdomain parts</strong> {{ result.subdomain_spoofing.subdomain_parts | join(' → ') }}</div>
+            {% endif %}
 
+            {% if result.subdomain_spoofing.brand_keywords_in_subdomain %}
+            <div class="tag-group">
+                <span class="lbl">Brand keywords parked in the subdomain</span>
+                {% for brand in result.subdomain_spoofing.brand_keywords_in_subdomain %}
+                <span class="tag tag-warn">{{ brand }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
 
-                To learn more about how this works, please visit: <a href="https://moeblogsca.wordpress.com/2025/09/11/gotfish-phishing-detection-tool">my blog</a>
-
-            </p>
+            {% if result.subdomain_spoofing.findings %}
+            <ul class="reasons">
+                {% for finding in result.subdomain_spoofing.findings %}
+                <li>{{ finding }}</li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="quiet">No subdomain spoofing indicators found.</p>
+            {% endif %}
         </div>
+        {% endif %}
 
-        <footer>
-            <p>GotFish is an educational tool for phishing awareness. Always verify suspicious content through multiple sources.</p>
-        </footer>
-    </div>
+        <!-- IDN / Non-ASCII -->
+        {% if result.idn_and_non_ascii %}
+        <div class="section">
+            <div class="section-title"><span class="no">05</span>Non-ASCII / IDN</div>
+
+            {% if result.idn_and_non_ascii.punycode %}
+            <div class="detail-row"><strong>Punycode</strong> {{ result.idn_and_non_ascii.punycode }}</div>
+            {% endif %}
+            {% if result.idn_and_non_ascii.decoded_idn %}
+            <div class="detail-row"><strong>Decoded IDN</strong> {{ result.idn_and_non_ascii.decoded_idn }}</div>
+            {% endif %}
+
+            {% if result.idn_and_non_ascii.non_ascii_characters %}
+            <div class="tag-group">
+                <span class="lbl">Non-ASCII characters</span>
+                {% for item in result.idn_and_non_ascii.non_ascii_characters %}
+                <span class="tag tag-warn">{{ item.character }} ({{ item.codepoint }})</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if result.idn_and_non_ascii.findings %}
+            <ul class="reasons">
+                {% for finding in result.idn_and_non_ascii.findings %}
+                <li>{{ finding }}</li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="quiet">No non-ASCII or IDN indicators found.</p>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- DNSTwist.it Output -->
+        {% if result.dnstwist_it %}
+        <div class="section">
+            <div class="section-title"><span class="no">06</span>dnstwist.it — registered look-alikes</div>
+
+            {% if result.dnstwist_it.error %}
+            <p class="error-note">{{ result.dnstwist_it.error }}</p>
+            {% else %}
+            <div class="detail-row"><strong>Queried domain</strong> {{ result.dnstwist_it.queried_domain }}</div>
+            <div class="detail-row"><strong>Scan ID</strong> {{ result.dnstwist_it.scan_id }}</div>
+            {% if result.dnstwist_it.scan_url %}
+            <div class="detail-row"><strong>Scan URI</strong> <a class="scan-link" href="{{ result.dnstwist_it.scan_url }}" target="_blank" rel="noopener noreferrer">{{ result.dnstwist_it.scan_url }}</a></div>
+            {% endif %}
+            <div class="detail-row"><strong>Total permutations</strong> {{ result.dnstwist_it.total_permutations }}</div>
+            <div class="detail-row"><strong>Registered</strong> {{ result.dnstwist_it.registered_count }}</div>
+            <div class="detail-row"><strong>Unregistered</strong> {{ result.dnstwist_it.unregistered_count }}</div>
+
+            {% if result.dnstwist_it.registered_domains %}
+            <h4 class="subhead">Registered permutations — first 20</h4>
+            <div style="overflow-x: auto;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Domain</th>
+                            <th>IP address</th>
+                            <th>MX</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for domain in result.dnstwist_it.registered_domains[:20] %}
+                        <tr>
+                            <td>{{ domain.domain }}</td>
+                            <td>{{ (domain.dns_a or [''])[0] }}</td>
+                            <td>{{ (domain.dns_mx or [''])[0] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+            {% endif %}
+        </div>
+        {% endif %}
+    </section>
+    {% endif %}
+
+    <!-- Further reading -->
+    <section class="further">
+        <div class="col-label"><span>Further Reading</span></div>
+        <div class="further-inner">
+            <p>
+                The method behind this tool — why it spells inputs out instead of scoring them, where the brand list comes from, and how the dnstwist.it scan works — is written up in plain language on the blog.
+            </p>
+            <a class="blog-link" href="https://moeblogs.online/blog/gotfish-phishing-detection-tool/">Read the full write-up on moeblogs.online →</a>
+        </div>
+    </section>
+
+    <footer>
+        <span>GotFish — an educational tool for phishing awareness. Verify through multiple sources.</span>
+        <span><a href="https://moeblogs.online/blog/gotfish-phishing-detection-tool/">Background & method →</a></span>
+    </footer>
 
     <script>
-        function testExample(type, value) {
-            document.getElementById('input_type').value = type;
-            document.getElementById('input_value').value = value;
-        }
+        document.querySelectorAll('.specimen-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                document.getElementById('input_value').value = btn.dataset.value;
+            });
+        });
     </script>
 </body>
 </html>
-
-
